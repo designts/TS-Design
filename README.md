@@ -14,6 +14,17 @@ Open http://localhost:4400. The first run seeds the same sample library as the r
 
 Tests: `npm test`
 
+## Deploy to Vercel
+
+Vercel has no permanent disk, so on Vercel the app stores data in **Upstash Redis** and uploaded images in **Vercel Blob** (both have free tiers).
+
+1. In Vercel: **Add New → Project**, import the GitHub repository. Settings come from `vercel.json` (no framework, build `node scripts/vercel-build.mjs`, output `public`). Deploy.
+2. In the project's **Storage** tab: add **Upstash for Redis** (Marketplace) and **Blob**, and connect both to the project. This sets `KV_REST_API_URL` / `KV_REST_API_TOKEN` and `BLOB_READ_WRITE_TOKEN`.
+3. In **Settings → Environment Variables**, add `APP_PASSWORD` (site password; any username).
+4. **Redeploy** so the new variables apply. The first request seeds the sample library into Redis.
+
+On Vercel, image uploads are limited to 3 MB (Vercel's request size limit). Without Redis connected, the API responds with "No database configured".
+
 ## Deploy to Render
 
 1. Push this repository to GitHub (private is fine).

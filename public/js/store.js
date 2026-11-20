@@ -13,6 +13,7 @@ export async function load() {
   store.projects = state.projects;
   store.caseStudies = state.caseStudies;
   store.brandBase = config.brandBase;
+  store.maxUploadBytes = config.maxUploadBytes || 8 * 1024 * 1024;
   store.loaded = true;
 }
 export const brand = (file) => `${store.brandBase}/${file}`;
@@ -33,4 +34,8 @@ export const saveCaseStudy = async (cs) => upsert(store.caseStudies, await api('
 export const duplicateCaseStudy = async (id) => upsert(store.caseStudies, await api('POST', `/api/case-studies/${id}/duplicate`));
 export async function deleteCaseStudy(id) { await api('DELETE', `/api/case-studies/${id}`); store.caseStudies = store.caseStudies.filter((c) => c.id !== id); }
 
-export async function uploadImage(filename, dataUrl) { return api('POST', '/api/uploads', { filename, data: dataUrl }); }
+export async function uploadImage(filename, dataUrl) {
+  const bytes = Math.floor(((dataUrl.length - dataUrl.indexOf(',') - 1) * 3) / 4);
+  if (bytes > store.maxUploadBytes) throw new Error(`Images must be ${Math.round(store.maxUploadBytes / 1024 / 1024)} MB or smaller`);
+  return api('POST', '/api/uploads', { filename, data: dataUrl });
+}

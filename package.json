@@ -9,5 +9,11 @@
     "dev": "node --watch server/server.js",
     "test": "node --test tests/*.test.js"
   },
-  "engines": { "node": ">=20" }
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@vercel/blob": "2.4.0",
+    "@vercel/functions": "^3.11.3"
+  }
 }

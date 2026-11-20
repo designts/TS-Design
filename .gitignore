@@ -4,3 +4,5 @@ legacy/**/data/
 .env
 .claude/
 *.tmp
+public/shared/
+.vercel/
