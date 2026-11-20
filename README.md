@@ -14,6 +14,15 @@ Open http://localhost:4400. The first run seeds the same sample library as the r
 
 Tests: `npm test`
 
+## Deploy to Render
+
+1. Push this repository to GitHub (private is fine).
+2. In Render: **New + → Blueprint**, pick the repository. `render.yaml` creates a Node web service (Starter plan) with a 1 GB persistent disk at `/var/data`.
+3. When asked for `APP_PASSWORD`, enter a shared password. Visitors sign in with any username and that password. Leave it empty only for a private network.
+4. Deploys run on every push to `main`. Data on the disk survives deploys and restarts.
+
+Environment: `PORT` (set by Render), `DATA_DIR` (disk path), `APP_PASSWORD` (optional site password), `BRAND_BASE_URL` (fallback image host).
+
 ## What's in it
 
 | Area | Route | Notes |
