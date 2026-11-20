@@ -1,0 +1,76 @@
+{
+  "id": "project-specific",
+  "name": "Project-Specific Case Study",
+  "description": "Showcase an individual project, its challenges, solutions, technology and business impact.",
+  "cta": "Create Project Case Study",
+  "figma": {
+    "fileKey": "RjCFW9LoK7yCWJ9A8SmPIp",
+    "fileName": "Case study New",
+    "pageName": "Page 16",
+    "sectionId": "665:692",
+    "sectionName": "Project Specific Case study",
+    "frames": [{ "id": "665:694", "name": "Case study 5", "label": "Case study page" }]
+  },
+  "sections": [
+    { "key": "identity", "title": "Project identity", "appearsIn": "Header strip and hero band" },
+    { "key": "screens", "title": "Product screens", "appearsIn": "The two phone mock-ups in the hero band" },
+    { "key": "solution", "title": "Solution", "appearsIn": "\"Solution\" section and Technical Highlights" },
+    { "key": "tech", "title": "Tech stack", "appearsIn": "Black \"Tech stack\" footer band" },
+    { "key": "admin", "title": "Admin settings", "appearsIn": "Header strip", "adminOnly": true }
+  ],
+  "fields": [
+    { "key": "project_title", "section": "identity", "label": "Project title", "type": "text", "required": true, "maxLength": 48, "placeholder": "e.g. Real Estate Tokenization Platform", "help": "Shown under \"CASE STUDY\" in the header strip." },
+    { "key": "client_logo", "section": "identity", "label": "Client / product logo", "type": "image", "required": true, "help": "Wide logo on a transparent background (PNG). It is fitted, never stretched, into a 217 × 56 area." },
+    { "key": "project_description", "section": "identity", "label": "One-line project description", "type": "textarea", "required": true, "maxLength": 115, "rows": 2, "placeholder": "What the platform lets users do, in one sentence.", "help": "Centred under the logo; fits two lines." },
+    { "key": "services", "section": "identity", "label": "Services delivered", "type": "list", "required": true, "minItems": 1, "maxItems": 4, "itemMaxLength": 26, "maxTotalLength": 84, "itemLabel": "Service", "placeholder": "e.g. Mobile App Development", "help": "Shown as the outlined pills under the description." },
+    { "key": "brand_color", "section": "identity", "label": "Hero band colour", "type": "color", "required": false, "help": "The client's brand colour behind the phone screens. Leave blank to keep the template colour." },
+
+    { "key": "screen_primary", "section": "screens", "label": "Left phone screen", "type": "image", "required": true, "help": "A full-height mobile screenshot (portrait). Only the top part is visible in the layout." },
+    { "key": "screen_secondary", "section": "screens", "label": "Right phone screen", "type": "image", "required": true, "help": "A second mobile screenshot (portrait). Only the top part is visible in the layout." },
+
+    { "key": "solution_title", "section": "solution", "label": "Solution headline", "type": "text", "required": true, "maxLength": 50, "placeholder": "e.g. Platform Development" },
+    { "key": "solution_summary", "section": "solution", "label": "Solution summary", "type": "textarea", "required": true, "maxLength": 200, "rows": 2, "placeholder": "What TechStalwarts delivered, in one or two sentences." },
+    { "key": "highlights_heading", "section": "solution", "label": "Highlights list heading", "type": "text", "required": true, "maxLength": 30, "default": "Modules", "help": "Heading above the highlights list. The template uses \"Modules\"." },
+    { "key": "modules", "section": "solution", "label": "Modules / key features", "type": "list", "required": true, "minItems": 2, "maxItems": 12, "itemMaxLength": 50, "itemLabel": "Module", "placeholder": "e.g. Wallet Management", "help": "Laid out in two balanced columns, up to 12 items." },
+
+    { "key": "tech_stack", "section": "tech", "label": "Technologies", "type": "repeater", "required": true, "minItems": 1, "maxItems": 6, "itemLabel": "Technology",
+      "help": "Upload each technology's logo (transparent PNG works best on the black band). Without a logo, the name is shown as text.",
+      "itemFields": [
+        { "key": "name", "label": "Name", "type": "text", "required": true, "maxLength": 24, "placeholder": "e.g. React" },
+        { "key": "logo", "label": "Logo", "type": "image", "required": false }
+      ] },
+
+    { "key": "case_number", "section": "admin", "label": "Case study number", "type": "text", "adminOnly": true, "requiredForGeneration": true, "maxLength": 3, "pattern": "^[0-9]{1,3}$", "patternMessage": "Digits only, e.g. 05", "placeholder": "05", "help": "Sequence number shown in red in the header strip." }
+  ],
+  "bindings": [
+    { "id": "case_number", "type": "text", "node": "665:696", "nodeName": "04 (number)", "value": "{case_number}" },
+    { "id": "project_title", "type": "text", "node": "665:700", "nodeName": "Label / title", "value": "{project_title}" },
+    { "id": "client_logo", "type": "image", "node": "665:706", "nodeName": "Logo image", "field": "client_logo", "scaleMode": "FIT" },
+    { "id": "project_description", "type": "text", "node": "665:705", "nodeName": "Description", "value": "{project_description}" },
+    { "id": "services", "type": "chips", "field": "services", "container": "665:719", "nodeName": "Service pills",
+      "slots": [ { "node": "665:720", "text": "665:721" }, { "node": "665:722", "text": "665:723" }, { "node": "665:724", "text": "665:725" }, { "node": "665:726", "text": "665:727" } ] },
+    { "id": "brand_color", "type": "fill", "node": "665:703", "nodeName": "Hero background", "field": "brand_color", "optional": true },
+    { "id": "screen_primary", "type": "image", "node": "665:718", "nodeName": "Left phone screen", "field": "screen_primary", "scaleMode": "FILL" },
+    { "id": "screen_secondary", "type": "image", "node": "665:709", "nodeName": "Right phone screen", "field": "screen_secondary", "scaleMode": "FILL" },
+    { "id": "clipped_screen", "type": "hide", "node": "665:710", "nodeName": "Third phone (clipped, not visible in layout)", "note": "Hidden so the previous client's screenshots do not travel inside generated copies." },
+    { "id": "solution_title", "type": "text", "node": "665:746", "nodeName": "Platform Development", "value": "{solution_title}" },
+    { "id": "solution_summary", "type": "text", "node": "665:749", "nodeName": "Solution bullet", "value": "{solution_summary}" },
+    { "id": "highlights_heading", "type": "text", "node": "665:754", "nodeName": "Modules", "value": "{highlights_heading}" },
+    { "id": "modules", "type": "twoColumnList", "field": "modules", "nodeName": "Modules list", "collapseUpTo": "665:753",
+      "left":  [ { "hide": "665:757", "text": "665:760" }, { "hide": "665:761", "text": "665:763" }, { "hide": "665:773", "text": "665:776" }, { "hide": "665:777", "text": "665:779" }, { "hide": "665:789", "text": "665:792" }, { "hide": "665:793", "text": "665:795" } ],
+      "right": [ { "hide": "665:765", "text": "665:767" }, { "hide": "665:768", "text": "665:770" }, { "hide": "665:781", "text": "665:783" }, { "hide": "665:784", "text": "665:786" }, { "hide": "665:797", "text": "665:799" }, { "hide": "665:800", "text": "665:802" } ] },
+    { "id": "tech_stack", "type": "logos", "field": "tech_stack", "container": "665:737", "nodeName": "Tech logos row", "height": 36, "textStyleFrom": "665:736" }
+  ],
+  "sampleData": {
+    "case_number": "99",
+    "project_title": "TEST – Sample Project",
+    "project_description": "TEST DATA – sample description used only to verify that the template populates correctly.",
+    "services": ["UI/UX Design", "Web Development", "QA"],
+    "solution_title": "TEST – Sample Solution",
+    "solution_summary": "TEST DATA – this is placeholder content generated by the admin template test.",
+    "highlights_heading": "Modules",
+    "modules": ["Test Module 1", "Test Module 2", "Test Module 3", "Test Module 4", "Test Module 5"],
+    "tech_stack": [{ "name": "Test Tech A" }, { "name": "Test Tech B" }],
+    "sampleImages": ["client_logo", "screen_primary", "screen_secondary"]
+  }
+}

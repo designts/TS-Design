@@ -1,0 +1,209 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  :root { --red: #c8202f; --ink: var(--figma-color-text, #16181d); --muted: var(--figma-color-text-secondary, #6b7180); --line: var(--figma-color-border, #e3e5ea); --bg: var(--figma-color-bg, #fff); --bg2: var(--figma-color-bg-secondary, #f6f7f9); }
+  * { box-sizing: border-box; }
+  body { margin: 0; font: 12px/1.45 Inter, system-ui, sans-serif; color: var(--ink); background: var(--bg); }
+  header { padding: 12px 14px; border-bottom: 1px solid var(--line); display: flex; align-items: center; gap: 8px; }
+  header b { font-size: 13px; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: #c1c5cd; }
+  .dot.on { background: #1d7a46; } .dot.err { background: var(--red); }
+  section { padding: 12px 14px; border-bottom: 1px solid var(--line); }
+  h4 { margin: 0 0 8px; font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
+  label { display: block; margin: 6px 0 2px; color: var(--muted); }
+  input[type=text], input[type=password] { width: 100%; padding: 6px 8px; border: 1px solid var(--line); border-radius: 6px; background: var(--bg); color: var(--ink); font: inherit; }
+  button { font: inherit; font-weight: 600; padding: 6px 12px; border-radius: 6px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); cursor: pointer; }
+  button.primary { background: var(--red); border-color: var(--red); color: #fff; }
+  button:disabled { opacity: .5; cursor: default; }
+  .row { display: flex; gap: 8px; align-items: center; margin-top: 8px; flex-wrap: wrap; }
+  .jobs { display: flex; flex-direction: column; gap: 6px; }
+  .job { border: 1px solid var(--line); border-radius: 6px; padding: 8px; display: flex; gap: 8px; align-items: center; }
+  .job .t { flex: 1; min-width: 0; } .job .t b { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .muted { color: var(--muted); }
+  #log { height: 150px; overflow: auto; background: var(--bg2); border-radius: 6px; padding: 8px; font: 11px/1.5 ui-monospace, Consolas, monospace; white-space: pre-wrap; }
+  .ok { color: #1d7a46; } .bad { color: var(--red); }
+  .note { font-size: 11px; color: var(--muted); margin-top: 6px; }
+</style>
+</head>
+<body>
+<header><span class="dot" id="dot"></span><b>Case Study Generator</b><span class="muted" id="file" style="margin-left:auto"></span></header>
+
+<section id="settings">
+  <h4>Connection</h4>
+  <label for="url">Case Study Studio URL</label>
+  <input id="url" type="text" value="http://localhost:4400">
+  <label for="token">Plugin token (Admin → Templates)</label>
+  <input id="token" type="password" autocomplete="off">
+  <div class="row"><button class="primary" id="connect">Connect</button><span id="connMsg" class="muted"></span></div>
+</section>
+
+<section>
+  <h4>Templates</h4>
+  <div class="row" style="margin-top:0"><button id="sync" disabled>Sync templates</button><span class="muted">Checks every mapped layer · read-only</span></div>
+</section>
+
+<section>
+  <h4>Generation queue</h4>
+  <div class="jobs" id="jobs"><span class="muted">Connect to load the queue.</span></div>
+  <div class="row"><button id="refresh" disabled>Refresh</button><button class="primary" id="processAll" disabled>Process all</button>
+    <label style="display:flex;gap:6px;align-items:center;margin:0"><input type="checkbox" id="auto"> Auto-process</label></div>
+  <div class="note">Generated copies go to the “Generated Case Studies” page. Master templates are never modified.</div>
+</section>
+
+<section>
+  <h4>Log</h4>
+  <div id="log"></div>
+</section>
+
+<script>
+const $ = (id) => document.getElementById(id);
+let settings = { url: 'http://localhost:4400', token: '' };
+let connected = false, busy = false, autoTimer = null;
+let reqSeq = 0; const pending = {};
+
+function log(msg, cls) {
+  const line = document.createElement('div');
+  if (cls) line.className = cls;
+  line.textContent = `[${new Date().toLocaleTimeString()}] ${msg}`;
+  $('log').prepend(line);
+}
+function callMain(type, payload, transfer) {
+  const requestId = ++reqSeq;
+  return new Promise((resolve, reject) => {
+    pending[requestId] = { resolve, reject };
+    parent.postMessage({ pluginMessage: Object.assign({ type, requestId }, payload) }, '*');
+  });
+}
+window.onmessage = (e) => {
+  const msg = e.data.pluginMessage;
+  if (!msg) return;
+  if (msg.type === 'settings') {
+    if (msg.settings) settings = msg.settings;
+    $('url').value = settings.url; $('token').value = settings.token;
+    $('file').textContent = msg.fileName || '';
+    if (settings.token) connect();
+    return;
+  }
+  const p = pending[msg.requestId];
+  if (!p) { if (msg.type === 'error') log(msg.message, 'bad'); return; }
+  delete pending[msg.requestId];
+  if (msg.type === 'error') p.reject(new Error(msg.message)); else p.resolve(msg);
+};
+
+async function api(method, path, body) {
+  const res = await fetch(settings.url.replace(/\/$/, '') + path, {
+    method, headers: Object.assign({ 'X-Plugin-Token': settings.token }, body ? { 'Content-Type': 'application/json' } : {}), body: body ? JSON.stringify(body) : undefined,
+  });
+  const ct = res.headers.get('content-type') || '';
+  const data = ct.includes('json') ? await res.json() : new Uint8Array(await res.arrayBuffer());
+  if (!res.ok) throw new Error((data && data.error) || `HTTP ${res.status}`);
+  return data;
+}
+function b64(bytes) {
+  let s = ''; const chunk = 0x8000;
+  for (let i = 0; i < bytes.length; i += chunk) s += String.fromCharCode.apply(null, bytes.subarray(i, i + chunk));
+  return btoa(s);
+}
+function setConnected(ok, text) {
+  connected = ok;
+  $('dot').className = 'dot ' + (ok ? 'on' : 'err');
+  $('connMsg').textContent = text || '';
+  ['sync', 'refresh', 'processAll'].forEach((id) => ($(id).disabled = !ok));
+}
+
+async function connect() {
+  settings = { url: $('url').value.trim(), token: $('token').value.trim() };
+  try {
+    await api('GET', '/api/plugin/hello');
+    parent.postMessage({ pluginMessage: { type: 'save-settings', settings } }, '*');
+    setConnected(true, 'Connected');
+    log('Connected to ' + settings.url, 'ok');
+    loadJobs();
+  } catch (e) {
+    setConnected(false, e.message);
+    log('Connection failed: ' + e.message + ' — is the server running, and is the token correct?', 'bad');
+  }
+}
+
+async function sync() {
+  $('sync').disabled = true;
+  try {
+    const templates = await api('GET', '/api/plugin/templates');
+    for (const t of templates) {
+      log(`Syncing ${t.name}…`);
+      const { report } = await callMain('sync', { template: t });
+      report.thumbnails = report.thumbnails.map((th) => ({ frameId: th.frameId, png: b64(th.png) }));
+      const missing = Object.entries(report.nodes).filter(([, n]) => !n.exists || n.insideTemplate === false);
+      const summary = await api('POST', `/api/plugin/templates/${t.id}/sync`, { report });
+      if (report.fileMismatch) log(`${t.name}: this is not the template file (${t.figma.fileName}).`, 'bad');
+      log(`${t.name}: ${summary.status}${missing.length ? ' — problems: ' + missing.map(([id]) => id).join(', ') : ''}`, summary.status === 'Ready' ? 'ok' : 'bad');
+    }
+  } catch (e) { log('Sync failed: ' + e.message, 'bad'); }
+  $('sync').disabled = !connected;
+}
+
+let jobs = [];
+async function loadJobs() {
+  try {
+    jobs = await api('GET', '/api/plugin/jobs');
+    const box = $('jobs');
+    box.innerHTML = '';
+    if (!jobs.length) { box.innerHTML = '<span class="muted">No case studies waiting.</span>'; return; }
+    for (const j of jobs) {
+      const el = document.createElement('div');
+      el.className = 'job';
+      el.innerHTML = `<div class="t"><b></b><span class="muted"></span></div><button>Generate</button>`;
+      el.querySelector('b').textContent = (j.isTest ? 'TEST · ' : '') + j.title;
+      el.querySelector('span').textContent = `${j.template} · v${j.version}${j.status === 'running' ? ' · running (retry)' : ''}`;
+      el.querySelector('button').onclick = () => runJob(j.id);
+      box.append(el);
+    }
+  } catch (e) { log('Could not load queue: ' + e.message, 'bad'); }
+}
+
+async function runJob(jobId) {
+  if (busy) return;
+  busy = true;
+  let job;
+  try {
+    job = await api('POST', `/api/plugin/jobs/${encodeURIComponent(jobId)}/claim`);
+    log(`Generating "${job.title}" v${job.version} (${job.ops.length} operations)…`);
+    const assets = {};
+    for (const id of job.assets) assets[id] = await api('GET', `/api/plugin/assets/${id}`);
+    const { result } = await callMain('generate', { job, assets });
+    log(`Populated ${result.frames.length} frame(s); uploading previews…`);
+    const exportsPayload = result.exports.map((e) => ({ name: e.name, nodeId: e.nodeId, png: b64(e.png), pdf: b64(e.pdf) }));
+    delete result.exports;
+    await api('POST', `/api/plugin/jobs/${encodeURIComponent(job.id)}/complete`, { result, exports: exportsPayload });
+    (result.warnings || []).forEach((w) => log('Note: ' + w));
+    log(`Done: "${job.title}" v${job.version}`, 'ok');
+    parent.postMessage({ pluginMessage: { type: 'notify', text: `Generated "${job.title}"` } }, '*');
+    parent.postMessage({ pluginMessage: { type: 'focus', nodeId: result.sectionId } }, '*');
+  } catch (e) {
+    log(`Failed${job ? ' "' + job.title + '"' : ''}: ${e.message}`, 'bad');
+    if (job) await api('POST', `/api/plugin/jobs/${encodeURIComponent(job.id)}/fail`, { message: e.message }).catch(() => {});
+  } finally {
+    busy = false;
+    loadJobs();
+  }
+}
+
+async function processAll() {
+  await loadJobs();
+  for (const j of jobs.slice()) await runJob(j.id);
+}
+
+$('connect').onclick = connect;
+$('sync').onclick = sync;
+$('refresh').onclick = loadJobs;
+$('processAll').onclick = processAll;
+$('auto').onchange = (e) => {
+  clearInterval(autoTimer);
+  if (e.target.checked) { autoTimer = setInterval(() => { if (connected && !busy) processAll(); }, 10000); log('Auto-process on (every 10 s)'); }
+};
+parent.postMessage({ pluginMessage: { type: 'load-settings' } }, '*');
+</script>
+</body>
+</html>

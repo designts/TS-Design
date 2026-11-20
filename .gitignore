@@ -1,0 +1,6 @@
+node_modules/
+data/
+legacy/**/data/
+.env
+.claude/
+*.tmp

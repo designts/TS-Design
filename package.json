@@ -1,0 +1,13 @@
+{
+  "name": "ts-case-study-builder",
+  "version": "2.0.0",
+  "private": true,
+  "description": "TechStalwarts Case Study Builder: reusable project records assembled into domain, project or staffing case studies.",
+  "type": "module",
+  "scripts": {
+    "start": "node server/server.js",
+    "dev": "node --watch server/server.js",
+    "test": "node --test tests/*.test.js"
+  },
+  "engines": { "node": ">=20" }
+}

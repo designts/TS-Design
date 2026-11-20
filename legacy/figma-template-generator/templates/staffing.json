@@ -1,0 +1,142 @@
+{
+  "id": "staffing",
+  "name": "Staffing Case Study",
+  "description": "Showcase how TechStalwarts provided, managed and scaled engineering resources based on client requirements.",
+  "cta": "Create Staffing Case Study",
+  "figma": {
+    "fileKey": "RjCFW9LoK7yCWJ9A8SmPIp",
+    "fileName": "Case study New",
+    "pageName": "Page 16",
+    "sectionId": "665:691",
+    "sectionName": "Staffing Case study template",
+    "frames": [
+      { "id": "648:69", "name": "01 — Client Engagement & Team Strategy", "label": "Slide 1 · Engagement & team" },
+      { "id": "648:189", "name": "02 — Resource Scaling & Business Impact", "label": "Slide 2 · Scaling & impact" }
+    ]
+  },
+  "sections": [
+    { "key": "engagement", "title": "Client & engagement", "appearsIn": "Slide 1 headline and meta row; slide 2 sub-headline" },
+    { "key": "challenge", "title": "The challenge", "appearsIn": "Slide 1 · \"The Challenge\" column" },
+    { "key": "approach", "title": "Our approach", "appearsIn": "Slide 1 · \"Our Approach\" column" },
+    { "key": "team", "title": "Team & technology", "appearsIn": "Slide 1 · Team Composition and Technology Stack" },
+    { "key": "deployment", "title": "Monthly resource deployment", "appearsIn": "Slide 2 chart, plus the Engagement Snapshot and Scaling at a Glance figures (calculated)" },
+    { "key": "outcomes", "title": "Business outcomes", "appearsIn": "Slide 2 · Outcome Summary and impact cards" }
+  ],
+  "fields": [
+    { "key": "client_name", "section": "engagement", "label": "Client name", "type": "text", "required": true, "maxLength": 28, "placeholder": "e.g. Acme Retail", "help": "Used in both headlines and the CLIENT field. Use an anonymised descriptor (e.g. \"a US Retail Leader\") if the client cannot be named." },
+    { "key": "industry", "section": "engagement", "label": "Industry", "type": "text", "required": true, "maxLength": 32, "placeholder": "e.g. Retail & E-commerce" },
+    { "key": "business_goal", "section": "engagement", "label": "Business goal or technology initiative", "type": "text", "required": true, "maxLength": 80, "placeholder": "e.g. a cloud-native commerce re-platform", "help": "Completes the sentence \"Flexible engineering capacity for …\"" },
+    { "key": "engagement_status", "section": "engagement", "label": "Engagement status", "type": "select", "required": true, "options": [ { "value": "ongoing", "label": "Ongoing" }, { "value": "completed", "label": "Completed" } ], "help": "Controls whether the last chart bar is labelled \"Current\" or \"Final\"." },
+    { "key": "period_start", "section": "engagement", "label": "Reporting period – start", "type": "month", "required": true },
+    { "key": "period_end", "section": "engagement", "label": "Reporting period – end", "type": "month", "required": false, "requiredIf": { "field": "engagement_status", "equals": "completed" }, "help": "Required for completed engagements. Leave blank for ongoing ones to show \"Present\"." },
+
+    { "key": "challenge_summary", "section": "challenge", "label": "Challenge – one-line summary", "type": "textarea", "required": true, "maxLength": 70, "rows": 2 },
+    { "key": "challenge_points", "section": "challenge", "label": "Challenge points", "type": "list", "required": true, "minItems": 1, "maxItems": 3, "itemMaxLength": 110, "itemLabel": "Point", "itemHints": ["The business or engineering challenge", "The capability gap, delivery bottleneck, or changing demand", "Why the client needed external technology expertise"] },
+
+    { "key": "approach_summary", "section": "approach", "label": "Approach – one-line summary", "type": "textarea", "required": true, "maxLength": 70, "rows": 2 },
+    { "key": "approach_points", "section": "approach", "label": "Approach points", "type": "list", "required": true, "minItems": 1, "maxItems": 3, "itemMaxLength": 110, "itemLabel": "Point", "itemHints": ["The resource engagement strategy", "How the right skills and team structure were selected", "How the engagement supported changing business priorities"] },
+
+    { "key": "team_roles", "section": "team", "label": "Team composition (roles)", "type": "list", "required": true, "minItems": 1, "maxItems": 8, "itemMaxLength": 24, "itemLabel": "Role", "placeholder": "e.g. Frontend ×3" },
+    { "key": "technologies", "section": "team", "label": "Technology expertise", "type": "list", "required": true, "minItems": 1, "maxItems": 8, "itemMaxLength": 24, "itemLabel": "Technology", "placeholder": "e.g. React" },
+
+    { "key": "monthly_deployment", "section": "deployment", "label": "Active resources per month", "type": "repeater", "required": true, "minItems": 2, "maxItems": 12, "itemLabel": "Month", "layout": "table", "rule": "ascendingMonths",
+      "help": "One row per month, oldest first (max 12). Initial team, peak team, final team and the chart are all calculated from this table.",
+      "itemFields": [
+        { "key": "month", "label": "Month", "type": "month", "required": true },
+        { "key": "engineering", "label": "Engineering", "type": "number", "required": true, "min": 0, "max": 99, "integer": true },
+        { "key": "qa", "label": "QA / Testing", "type": "number", "required": true, "min": 0, "max": 99, "integer": true },
+        { "key": "data_other", "label": "Data / AI / Other", "type": "number", "required": true, "min": 0, "max": 99, "integer": true }
+      ] },
+
+    { "key": "outcome_statement", "section": "outcomes", "label": "Outcome summary", "type": "textarea", "required": true, "maxLength": 190, "rows": 4, "help": "How TechStalwarts helped the client respond to changing demand, strengthen capabilities, or improve delivery." },
+    { "key": "impact_metrics", "section": "outcomes", "label": "Impact metrics", "type": "repeater", "required": true, "minItems": 2, "maxItems": 4, "itemLabel": "Metric",
+      "help": "Only include figures you can source. Remove any card you have no data for.",
+      "defaultItems": [
+        { "value": "", "label": "Improvement in Delivery Speed", "source": "" },
+        { "value": "", "label": "Milestones Delivered", "source": "" },
+        { "value": "", "label": "Time to Deploy Resources", "source": "" },
+        { "value": "", "label": "Specialists Added or Redeployed", "source": "" }
+      ],
+      "itemFields": [
+        { "key": "value", "label": "Value", "type": "text", "required": true, "maxLength": 9, "placeholder": "e.g. 35%" },
+        { "key": "label", "label": "Label", "type": "text", "required": true, "maxLength": 38 },
+        { "key": "source", "label": "Source", "type": "text", "required": false, "maxLength": 40, "placeholder": "e.g. Jira, Q2 2025" }
+      ] }
+  ],
+  "derived": [
+    { "key": "period_label", "label": "Reporting period", "from": ["period_start", "period_end", "engagement_status"] },
+    { "key": "duration_months", "label": "Engagement duration (months)", "from": ["period_start", "period_end", "monthly_deployment"] },
+    { "key": "initial_team", "label": "Initial team size", "from": ["monthly_deployment"] },
+    { "key": "peak_team", "label": "Peak team size", "from": ["monthly_deployment"] },
+    { "key": "final_team", "label": "Final / current team", "from": ["monthly_deployment"] }
+  ],
+  "bindings": [
+    { "id": "s1_headline", "type": "tokens", "node": "648:85", "nodeName": "Slide 1 · Headline", "replace": { "[Client Name]": "{client_name}" } },
+    { "id": "s1_supporting", "type": "tokens", "node": "648:86", "nodeName": "Slide 1 · Supporting line", "replace": { "[business goal or technology initiative]": "{business_goal}" } },
+    { "id": "client", "type": "text", "node": "648:90", "nodeName": "Meta / CLIENT value", "value": "{client_name}" },
+    { "id": "industry", "type": "text", "node": "648:94", "nodeName": "Meta / INDUSTRY value", "value": "{industry}" },
+    { "id": "period", "type": "text", "node": "648:98", "nodeName": "Meta / REPORTING PERIOD value", "value": "{derived.period_label}" },
+    { "id": "challenge_summary", "type": "text", "node": "648:105", "nodeName": "Challenge · Summary", "value": "{challenge_summary}" },
+    { "id": "challenge_points", "type": "slots", "field": "challenge_points", "nodeName": "Challenge · Points",
+      "slots": [ { "hide": "648:107", "text": "648:109" }, { "hide": "648:110", "text": "648:112" }, { "hide": "648:113", "text": "648:115" } ] },
+    { "id": "approach_summary", "type": "text", "node": "648:121", "nodeName": "Approach · Summary", "value": "{approach_summary}" },
+    { "id": "approach_points", "type": "slots", "field": "approach_points", "nodeName": "Approach · Points",
+      "slots": [ { "hide": "648:123", "text": "648:125" }, { "hide": "648:126", "text": "648:128" }, { "hide": "648:129", "text": "648:131" } ] },
+    { "id": "snapshot_initial", "type": "props", "node": "648:136", "nodeName": "Snapshot · Initial Team Size", "props": { "Value#648:4": "{derived.initial_team}" } },
+    { "id": "snapshot_peak", "type": "props", "node": "648:142", "nodeName": "Snapshot · Peak Team Size", "props": { "Value#648:4": "{derived.peak_team}" } },
+    { "id": "snapshot_duration", "type": "props", "node": "648:148", "nodeName": "Snapshot · Engagement Duration", "props": { "Value#648:4": "{derived.duration_months}", "Caption#648:6": "Months · {derived.period_label}" } },
+    { "id": "team_roles", "type": "chips", "field": "team_roles", "container": "648:158", "nodeName": "Team Composition tags",
+      "slots": [ { "node": "648:159", "prop": "Text#648:1" }, { "node": "648:161", "prop": "Text#648:1" }, { "node": "648:163", "prop": "Text#648:1" }, { "node": "648:165", "prop": "Text#648:1" }, { "node": "648:167", "prop": "Text#648:1" }, { "node": "648:169", "prop": "Text#648:1" } ] },
+    { "id": "technologies", "type": "chips", "field": "technologies", "container": "648:176", "nodeName": "Technology Stack tags",
+      "slots": [ { "node": "648:177", "prop": "Text#648:1" }, { "node": "648:179", "prop": "Text#648:1" }, { "node": "648:181", "prop": "Text#648:1" }, { "node": "648:183", "prop": "Text#648:1" } ] },
+
+    { "id": "s2_supporting", "type": "tokens", "node": "648:206", "nodeName": "Slide 2 · Supporting line", "replace": { "[Client Name]": "{client_name}", "[Month Year – Month Year]": "{derived.period_label}" } },
+    { "id": "deployment_chart", "type": "stackedBar", "field": "monthly_deployment", "nodeName": "Resource deployment chart",
+      "bars": "648:285", "barPrototype": "648:295",
+      "series": ["data_other", "qa", "engineering"],
+      "seriesNames": { "engineering": "Engineering", "qa": "QA / Testing", "data_other": "Data / AI / Other" },
+      "yLabels": ["648:273", "648:275", "648:277", "648:279", "648:281", "648:283"],
+      "plotHeightPx": 240,
+      "markers": { "initial": "648:287", "peak": "648:310", "final": "648:326" } },
+    { "id": "impact_metrics", "type": "cards", "field": "impact_metrics", "nodeName": "Business impact cards",
+      "slots": [
+        { "node": "648:234", "source": "I648:234;648:54" },
+        { "node": "648:239", "source": "I648:239;648:54" },
+        { "node": "648:244", "source": "I648:244;648:54" },
+        { "node": "648:249", "source": "I648:249;648:54" } ],
+      "props": { "value": "Value#648:7", "label": "Label#648:8", "source": "Source#648:9" }, "sourcePrefix": "Source: " },
+    { "id": "outcome_statement", "type": "text", "node": "648:259", "nodeName": "Outcome Statement", "value": "{outcome_statement}" },
+    { "id": "glance_initial", "type": "text", "node": "648:264", "nodeName": "Glance · Initial team", "value": "{derived.initial_team}" },
+    { "id": "glance_peak", "type": "text", "node": "648:267", "nodeName": "Glance · Peak capacity", "value": "{derived.peak_team}" },
+    { "id": "glance_final", "type": "text", "node": "648:270", "nodeName": "Glance · Final / current team", "value": "{derived.final_team}" }
+  ],
+  "sampleData": {
+    "client_name": "TEST Client",
+    "industry": "TEST Industry",
+    "business_goal": "a TEST initiative (admin template test)",
+    "engagement_status": "ongoing",
+    "period_start": "2026-01",
+    "period_end": "",
+    "challenge_summary": "TEST – sample challenge summary.",
+    "challenge_points": ["TEST point one.", "TEST point two.", "TEST point three."],
+    "approach_summary": "TEST – sample approach summary.",
+    "approach_points": ["TEST point one.", "TEST point two."],
+    "team_roles": ["Test Role A", "Test Role B", "Test Role C"],
+    "technologies": ["Test Tech A", "Test Tech B", "Test Tech C", "Test Tech D", "Test Tech E"],
+    "monthly_deployment": [
+      { "month": "2026-01", "engineering": 2, "qa": 1, "data_other": 0 },
+      { "month": "2026-02", "engineering": 4, "qa": 1, "data_other": 1 },
+      { "month": "2026-03", "engineering": 7, "qa": 2, "data_other": 1 },
+      { "month": "2026-04", "engineering": 9, "qa": 3, "data_other": 2 },
+      { "month": "2026-05", "engineering": 8, "qa": 2, "data_other": 2 },
+      { "month": "2026-06", "engineering": 6, "qa": 2, "data_other": 1 },
+      { "month": "2026-07", "engineering": 6, "qa": 2, "data_other": 1 }
+    ],
+    "outcome_statement": "TEST DATA – placeholder outcome statement produced by the admin template test.",
+    "impact_metrics": [
+      { "value": "00%", "label": "TEST Metric A", "source": "TEST source" },
+      { "value": "00", "label": "TEST Metric B", "source": "" },
+      { "value": "00", "label": "TEST Metric C", "source": "TEST source" }
+    ]
+  }
+}

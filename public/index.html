@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en" data-scroll-behavior="smooth">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Case Study Builder</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.1.11"></script>
+  <style type="text/tailwindcss">
+    @theme {
+      --font-sans: "Lato", Arial, sans-serif;
+      --color-ink-950: #08090b; --color-ink-900: #0e1013; --color-ink-850: #13161a; --color-ink-800: #191c21; --color-ink-750: #1f2329;
+      --color-ink-700: #2a2f37; --color-ink-600: #3a404a; --color-ink-500: #4a515c;
+      --color-fg: #f4f5f7; --color-fg-muted: #b0b6c0; --color-fg-subtle: #858d99;
+      --color-accent: #e5383b; --color-accent-strong: #c8202a; --color-accent-soft: #2a1416; --color-accent-line: #5a1f23;
+      --color-success: #4cc794; --color-success-soft: #10261d; --color-warning: #e8b54d; --color-warning-soft: #2a2312;
+    }
+    @layer base {
+      body { background-color: var(--color-ink-950); font-family: var(--font-sans); color: var(--color-fg); -webkit-font-smoothing: antialiased; font-weight: 400; }
+      h1, h2, h3 { letter-spacing: -.01em; font-weight: 700; }
+      :focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; border-radius: 6px; }
+      ::selection { background: var(--color-accent-strong); color: #fff; }
+      button { cursor: pointer; }
+      button:disabled { cursor: not-allowed; }
+    }
+    @layer components {
+      .btn-primary, .btn-secondary, .btn-ghost, .btn-danger {
+        @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-medium whitespace-nowrap transition disabled:cursor-not-allowed disabled:opacity-50;
+      }
+      .btn-primary { @apply bg-accent text-white hover:bg-accent-strong; }
+      .btn-secondary { @apply border border-ink-700 bg-ink-850 text-fg hover:border-ink-600 hover:bg-ink-800; }
+      .btn-ghost { @apply text-fg-muted hover:bg-ink-800 hover:text-fg; }
+      .btn-danger { @apply border border-accent-line bg-accent-soft text-accent hover:bg-accent hover:text-white; }
+      .btn-sm { @apply px-3 py-1.5 text-xs; }
+      .input { @apply w-full rounded-lg border border-ink-700 bg-ink-850 px-3 py-2.5 text-sm text-fg transition placeholder:text-fg-subtle hover:border-ink-600 focus:border-accent focus:ring-2 focus:ring-accent/25 focus:outline-none; }
+      .input[aria-invalid=true] { @apply border-accent; }
+      .surface { @apply rounded-2xl border border-ink-700/70 bg-ink-900; }
+      .eyebrow { @apply text-xs font-medium tracking-[0.16em] text-fg-subtle uppercase; }
+      .label { @apply mb-1.5 block text-sm font-medium text-fg-muted; }
+    }
+    @media print {
+      body { background: #fff; }
+      .no-print { display: none !important; }
+      * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    }
+  </style>
+</head>
+<body>
+  <div id="app"></div>
+  <div id="toasts" aria-live="polite" role="status" class="pointer-events-none fixed right-4 bottom-4 z-50 flex flex-col gap-2 sm:right-6 sm:bottom-6"></div>
+  <script type="module" src="/js/main.js"></script>
+</body>
+</html>
